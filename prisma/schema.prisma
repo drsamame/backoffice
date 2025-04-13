@@ -1,0 +1,70 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("POSTGRES_PRISMA_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  user
+  admin
+}
+
+
+enum Status {
+  cancelled
+  pending
+  scheduled
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  cellphone     String?   @unique
+  password      String?
+  emailVerified DateTime?
+  image         String?
+  role          Role      @default(user)
+
+  accounts Account[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+}
+
+model Appointment {
+  id                 String   @id @default(cuid())
+  schedule           DateTime
+  status             Status
+  notes              String?  // Notas adicionales sobre la cita
+  betType            String?  // Tipo de apuesta (por ejemplo, "Deporte", "Casino", "Virtual")
+  amount             Float?   // Monto de la apuesta
+  location           String?  // Ubicación de la cita (si aplica)
+  outcome            String?  // Resultado de la apuesta (por ejemplo, "Ganada", "Perdida", "Pendiente")
+  updatedAt DateTime? @updatedAt
+}
+
