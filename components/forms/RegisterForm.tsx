@@ -43,7 +43,7 @@ const RegisterForm = () => {
           type: "400",
         });
       } else {
-        router.push(`/patients/${res.createdId}/register`);
+        router.push(`/admin`);
       }
     } catch (e: any) {
       console.log(e);
